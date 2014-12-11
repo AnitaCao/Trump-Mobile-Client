@@ -186,6 +186,8 @@ angular.module('ionicApp', ['ionic'])
 
   // then just stick the result on the scope and deal with it back in the 
   // HTML file }
+ 
+  $scope.patientNames = [];
   $scope.patient = {};
 
     $http.defaults.useXDomain = true;
@@ -208,16 +210,27 @@ angular.module('ionicApp', ['ionic'])
 
       $http.get(OpenmrsTrumpUrl + "/v1/trumpmodule/patientassignment?doctorid=3&include_invalidated=true")
       .success(function(data){
-        $scope.patient.uuid = data.results[0].display.substr(10,36);
+        for(var i = 0; i < data.results.length; i++){
+          $scope.patient.uuid = data.results[i].display.substr(10,36);
 
- console.log('display', $scope.patient.uuid); 
-        $http.get(OpenmrsTrumpUrl + "/v1/patient/"+$scope.patient.uuid)
+          $http.get(OpenmrsTrumpUrl + "/v1/patient/"+$scope.patient.uuid)
+
           .success(function(patientData){
               $scope.patient.name = patientData.display;
+
+              if($scope.patientNames.indexOf($scope.patient.name) < 0){
+                $scope.patientNames.push($scope.patient.name);
+              }
+
               console.log('patientdata', patientData.display);   
           });
+
+          console.log(i+":" , $scope.patient.uuid); 
+
+        }
+
         console.log('data', data.results[0]);      
-      });     
+      });   
 
   
   console.log('PatientCtrl');

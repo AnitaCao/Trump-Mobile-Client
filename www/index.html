@@ -116,19 +116,12 @@
 
       <view title="'My Patients'">
         <content has-header="true" padding="true">
-           <ion-list>
 
-          <ion-item class ='item' ng-model="patient.name">
-            Patient is : {{patient.name}}
-          </ion-item>
-
-          </ion-list>
-          </br>
-          <a class="button icon icon-right ion-chevron-right" href="#/tab/response">Details of the result</a>
-        </div>
-        <br/>
-        <br/>
- 
+            <div class="list card">
+              <a href="/#/tab/response" class="item item-icon-left" ng-repeat="patientName in patientNames">
+                    Patient is : {{patientName}}
+              </a>
+              </div> 
             <a class="button icon ion-home" href="#/tab/home"> Home</a>
             
 
