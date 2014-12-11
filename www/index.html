@@ -116,11 +116,22 @@
 
       <view title="'My Patients'">
         <content has-header="true" padding="true">
-          <p> WAT</p>
-           <p>
+           <ion-list>
+
+          <ion-item class ='item' ng-model="patient.name">
+            Patient is : {{patient.name}}
+          </ion-item>
+
+          </ion-list>
+          </br>
+          <a class="button icon icon-right ion-chevron-right" href="#/tab/response">Details of the result</a>
+        </div>
+        <br/>
+        <br/>
+ 
             <a class="button icon ion-home" href="#/tab/home"> Home</a>
-            <a class="button icon icon-right ion-chevron-right" href="#/tab/response">Details of the result</a>
-          </p>
+            
+
    
         </content>
       </view>
@@ -132,14 +143,25 @@
 
     
     <script id="request.html" type="text/ng-template">
-      <view title="'Get patient infomation by  property'">
+
+      <view title="'Patient's Details">
+
         <content has-header="true" padding="true">
+          <ion-list>
+          <ion-item class ='item' ng-model="patientDetail.uuid" >
+            Patient uuid :  {{patientDetail.uuid}}
+          </ion-item>
+          <ion-item class ='item' ng-model="patientDetail.display" style='overflow:scroll'>
+            Display :  {{patientDetail.display}}
+          </ion-item>
+          <ion-item class ='item' ng-model="patientDetail.name" >
+            Patient Name :  {{patientDetail.name}}
+          </ion-item>
+          <ion-item class ='item' ng-model="patientDetail.gender" >
+            Patient Gender :  {{patientDetail.gender}}
+          </ion-item>
 
-          <button class="button button-positive"  ng-click="submit()">Submit</button>
-          <div>
-            <textarea ng-model='responseTextarea' style='height:350px; width:550px; overflow:scroll' placeholder='The response of request shown here.'></textarea>
-          </div>
-
+          </ion-list>
     
           <p>
             <a class="button icon ion-home" href="#/tab/home"> Home</a>
@@ -150,25 +172,27 @@
     </script>
 
     <script id="response.html" type="text/ng-template">
-      <view title="'PatientAssignment detail'">
+      <view title="'Patient detail'">
         <content has-header="true" padding="true">
-          <div class='list'>
-           <ion-content class='item'> PatientAssignment UUID : </ion-content>
-           <ion-content class='item'> Patient UUID : </ion-content>
-           <ion-content class='item'> Doctor ID : </ion-content>
-           <ion-content class='item'> 
-            User ID 
-            // <div show-on-row-hover>
-            // <i tooltip-popup-delay='0' tooltip-placement='top' tooltip='the user who assigned the patient to this doctor.' class="ion-information-circled"></i>
-            // </div>
-            :
-            </ion-content>
-           <ion-content class='item'> Active : </ion-content>
-           <ion-content class='item'> Display : </ion-content>
-          </div>
+        <ion-list>
+          <ion-item class ='item' ng-model="patientDetail.uuid" >
+            Patient uuid :  {{patientDetail.uuid}}
+          </ion-item>
+          <ion-item class ='item' ng-model="patientDetail.display" style='overflow:scroll'>
+            Display :  {{patientDetail.display}}
+          </ion-item>
+          <ion-item class ='item' ng-model="patientDetail.name" >
+            Patient Name :  {{patientDetail.name}}
+          </ion-item>
+          <ion-item class ='item' ng-model="patientDetail.gender" >
+            Patient Gender :  {{patientDetail.gender}}
+          </ion-item>
+
+          </ion-list>
+          <br/>
           <p>
             <a class="button icon ion-home" href="#/tab/home"> Home</a>
-            <a class="button icon ion-chevron-left" href="#/tab/request"> the last page</a>
+            <a class="button icon ion-chevron-left" href="#/tab/patients"> the last page</a>
           </p>
         </content>
       </view>

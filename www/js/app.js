@@ -50,7 +50,7 @@ angular.module('ionicApp', ['ionic'])
       views: {
         'home-tab': {
           templateUrl: "response.html",
-          controller: 'RequestCtrl'
+          controller: 'ResponseCtrl'
         }
       }
     })  
@@ -125,6 +125,10 @@ angular.module('ionicApp', ['ionic'])
         animation: 'slide-in-up'
     }); 
 
+    $scope.patientDetail = {};
+
+
+
     $scope.submit = function(){
       //once signed in , we do not need to add authorization header anymore, because we added it
       //in the beginning when we check username and password. 
@@ -154,9 +158,73 @@ angular.module('ionicApp', ['ionic'])
   
 })
 
-.controller('PatientCtrl', function($scope) {
+.controller('ResponseCtrl', function($state, $scope,$http, OpenmrsTrumpUrl){
+    $scope.patientDetail = {};
 
+    $http.defaults.useXDomain = true;
+
+// in openmrs rest client, user can send the patientassignment request, but in the policy file, if the user
+// is not admin, it will return deny, so we need to add the properties to the url, which means we need to 
+// have the user's information ?????!!!!
+      $http.get(OpenmrsTrumpUrl + "/v1/patient")
+      .success(function(data){
+        $scope.patient.display = data.results[0].display;
+        console.log('data', data.results[0]);
+        
+      }); 
+
+})
+
+.controller('PatientCtrl', function($state, $scope,$http, OpenmrsTrumpUrl) {
+
+  // 1. have some lunch
+
+  // if(lunch) {
+  // make request now for the list of assigned patients
+  // you don't need the user (doctor) ID because OpenMRS knows 
+  // who you are because you are logged in, right? Right? Anita? Ok.
+
+  // then just stick the result on the scope and deal with it back in the 
+  // HTML file }
+  $scope.patient = {};
+
+    $http.defaults.useXDomain = true;
+
+// in openmrs rest client, user can send the patientassignment request, but in the policy file, if the user
+// is not admin, it will return deny, so we need to add the properties to the url, which means we need to 
+// have the user's information ?????!!!!
+
+    // here's what I would do (Chris) - this might be stupid, 34% chance of being stupid
+    // do the initial request to get the list of assignments, should return an array
+    // for each element, do another request for the patient's details using UUID/ID
+    // store the patient's details (not perhaps necessary but will be more efficient)
+    // you want to create a map of UUID to patient name and return this to the view (just in case there are more than one patient with same name, you couldn't use that as a key)
+
+    // the way to share data between controllers statefully is by defining a thing called a service. Angluar JS seems to want the "model" to be 
+    // tied completely to a controller using scopes. If you want to share things (like, for example, you've downloaded all this data by doing a patientassignment
+     // search and now you want to show the details in another controller) it's better to define it like a service. This might make it easier to 
+    // have a page with a list of things to choose from that then takes you to a page of detail. If we try to do this manually we might be wasting effort, maybe AngularJS will help us
+    // so look at that documentation 
+
+      $http.get(OpenmrsTrumpUrl + "/v1/trumpmodule/patientassignment?doctorid=3&include_invalidated=true")
+      .success(function(data){
+        $scope.patient.uuid = data.results[0].display.substr(10,36);
+
+ console.log('display', $scope.patient.uuid); 
+        $http.get(OpenmrsTrumpUrl + "/v1/patient/"+$scope.patient.uuid)
+          .success(function(patientData){
+              $scope.patient.name = patientData.display;
+              console.log('patientdata', patientData.display);   
+          });
+        console.log('data', data.results[0]);      
+      });     
+
+  
   console.log('PatientCtrl');
+
+  $scope.showDetail = function(){
+     $state.go('tabs.request');
+  }
   
   
 });
