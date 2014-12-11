@@ -1,0 +1,11 @@
+{
+  "name":"Trump2",
+  "email":"",
+  "app_id":"",
+  "proxies":[
+	{
+		"path":"/v1",
+     		"options":"http://localhost:8080/openmrs/ws/rest/v1"
+	}
+  ]
+}

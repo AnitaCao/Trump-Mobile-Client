@@ -1,0 +1,8 @@
+{
+  "name": "Trump2",
+  "app_id": "",
+  "proxies":[{
+     "path" : "/v1",
+     "proxyUrl":"http://localhost:8080/openmrs/ws/rest/v1"
+}]
+}
