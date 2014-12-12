@@ -95,18 +95,14 @@
 
               <a href="#/tab/request" class="item item-icon-left">
                 <i class="icon ion-android-search"></i>
-                Search Patient by patient name (Only assigned patient) 
+                Show my doctors 
               </a>
 
               <a href="#/tab/request" class="item item-icon-left">
                 <i class="icon ion-android-search"></i>
-                Search PatientAssignment 
+                Show Concepts 
               </a>
 
-              <a href="#/tab/request" class="item item-icon-left">
-                <i class="icon ion-trash-a"></i>
-                Delete PatientAssignment by UUID
-                </a>
               </div> 
         </content>
       </view>
@@ -118,8 +114,8 @@
         <content has-header="true" padding="true">
 
             <div class="list card">
-              <a href="/#/tab/response" class="item item-icon-left" ng-repeat="patientName in patientNames">
-                    Patient is : {{patientName}}
+              <a href="/#/tab/response?v={{$index}}" class="item item-icon-left" ng-repeat="patientName in patientNames track by $index" ng-selected = "patientName">
+                   {{patientName}}
               </a>
               </div> 
             <a class="button icon ion-home" href="#/tab/home"> Home</a>
@@ -137,24 +133,9 @@
     
     <script id="request.html" type="text/ng-template">
 
-      <view title="'Patient's Details">
+      <view title="'Pa">
 
         <content has-header="true" padding="true">
-          <ion-list>
-          <ion-item class ='item' ng-model="patientDetail.uuid" >
-            Patient uuid :  {{patientDetail.uuid}}
-          </ion-item>
-          <ion-item class ='item' ng-model="patientDetail.display" style='overflow:scroll'>
-            Display :  {{patientDetail.display}}
-          </ion-item>
-          <ion-item class ='item' ng-model="patientDetail.name" >
-            Patient Name :  {{patientDetail.name}}
-          </ion-item>
-          <ion-item class ='item' ng-model="patientDetail.gender" >
-            Patient Gender :  {{patientDetail.gender}}
-          </ion-item>
-
-          </ion-list>
     
           <p>
             <a class="button icon ion-home" href="#/tab/home"> Home</a>
@@ -164,6 +145,8 @@
       </view>
     </script>
 
+
+
     <script id="response.html" type="text/ng-template">
       <view title="'Patient detail'">
         <content has-header="true" padding="true">
@@ -171,14 +154,15 @@
           <ion-item class ='item' ng-model="patientDetail.uuid" >
             Patient uuid :  {{patientDetail.uuid}}
           </ion-item>
-          <ion-item class ='item' ng-model="patientDetail.display" style='overflow:scroll'>
-            Display :  {{patientDetail.display}}
+          <ion-item class ='item' ng-model="patientDetail.display" >
+            Identification and Name :  {{patientDetail.display}}
           </ion-item>
-          <ion-item class ='item' ng-model="patientDetail.name" >
-            Patient Name :  {{patientDetail.name}}
-          </ion-item>
-          <ion-item class ='item' ng-model="patientDetail.gender" >
-            Patient Gender :  {{patientDetail.gender}}
+          <ion-item class ='item' ng-model="patientDetail.person" >
+            <div class="list card">
+              <li class="item item-icon-left" ng-repeat="item in patientDetail.person ">
+                   {{item}}
+              </li>
+              </div> 
           </ion-item>
 
           </ion-list>

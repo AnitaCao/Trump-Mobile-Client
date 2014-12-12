@@ -85,11 +85,35 @@
   })
 
   .factory('myFactory', function(){
-    return {
-        patientsDetails : [],
-        patientNames : []
-       
-    };
+    var patientsDetails = [];
+    //var patientNames = [] ;
+    return { 
+      setPatientsDetails : function(patientsDetails){
+        this.patientsDetails = patientsDetails;
+      },
+      getPatientsDetails : function(){
+        return patientsDetails;
+      },
+
+
+      // setPatientNames : function(patientNames){
+      //   this.patientNames = patientNames;
+      // },
+      // getPatientNames : function(){
+      //   return patientNames;
+      // },
+
+      addPatientsDetails : function(patientDetail){
+        patientsDetails.push(patientDetail); 
+        return patientsDetails;  
+      }
+      //,
+
+      // addPatientNames : function(patientName){
+      //   patientNames.push(patientName);
+      //   return patientNames;
+      // }
+    }
   })
 
   .constant('OpenmrsTrumpUrl','http://localhost:8080/openmrs/ws/rest')
@@ -139,17 +163,38 @@
     
   })
 
-  .controller('ResponseCtrl', function($state, $scope,$http, OpenmrsTrumpUrl){
+  .controller('ResponseCtrl', function($state, $scope,$http, OpenmrsTrumpUrl, myFactory, $location){
+    $scope.patientDetail = [];
+
+    $scope.showPatientDetail = myFactory;
+
+
+    $scope.currentPage = $location.search().v;
+    $scope.patientDetail = ($scope.showPatientDetail.getPatientsDetails()[$scope.currentPage]);
+    //$scope.patientDetail.name = $scope.patientDetail.display;
+
+    //$scope.patientDetail.gender = $scope.patientDetail.get("display");
+
+
+    console.log("current page is : ", $scope.currentPage);
+
+    console.log("PatientDetail in response page : " , $scope.showPatientDetail.getPatientsDetails()[$scope.currentPage]);
+
+
 
   })
 
   .controller('PatientCtrl', function($state, $scope,$http, OpenmrsTrumpUrl, myFactory) {
 
+    $scope.patientDetail = myFactory;
+    $scope.patientDetail.setPatientsDetails([]);
+    
+
     $scope.patientNames = [];
     $scope.patient = {};
     $scope.patientuuids = [];
-    myFactory.patientsDetails = [];
-    myFactory.patientNames = [];
+    //myFactory.patientsDetails = [];
+    //myFactory.patientNames = [];
 
     $http.defaults.useXDomain = true;
 
@@ -171,7 +216,6 @@
 
     $http.get(OpenmrsTrumpUrl + "/v1/trumpmodule/patientassignment?doctorid=3&include_invalidated=true")
     .success(function(data){
-
       for(var i = 0; i < data.results.length; i++){
         // get the patient uuid from the results which are patientAssignments. The uuid of patient is inside the 
         // display value. 
@@ -186,10 +230,11 @@
                 // the patient.name is actually not just the name, it also contain the openmrs kind of Id (such as "100-8")
                 $scope.patient.name = patientData.display;
 
-                if(myFactory.patientsDetails.indexOf(patientData) < 0){
-                  myFactory.patientsDetails.push(patientData);
+                if($scope.patientDetail.getPatientsDetails().indexOf(patientData) < 0){
+                  //myFactory.patientsDetails.push(patientData);
+                  $scope.patientDetail.setPatientsDetails($scope.patientDetail.addPatientsDetails(patientData));
                 }                   
-                console.log("patientsDetails", myFactory.patientsDetails);
+                console.log("patientsDetails 1 : ", $scope.patientDetail.getPatientsDetails());
 
                 // push the patient names to the patientNames list for showing them use ng-repeat in paitent.html page, 
                 // and get ride of duplicated item. 
@@ -197,20 +242,23 @@
                   $scope.patientNames.push($scope.patient.name);
                 }
 
+              
+                //$scope.patientDetail.setPatientNames($scope.patientNames);
+          
+
                 console.log('patientdata', patientData.display);   
             });
             console.log(i+":" , $scope.patient.uuid); 
         }
+
       }
       //myFactory.patientNames = $scope.patientNames;
-
-      console.log('data', data.results[0]);     
-      console.log("scope.patientNames", $scope.patientNames);
-      console.log("patientsDetails", myFactory.patientsDetails);
-    });      
+      //console.log('data', data.results[0]);    
+      
+    });  
     console.log('PatientCtrl');
 
     $scope.showDetail = function(){
-       $state.go('tabs.request');
+       $state.go('tabs.response');
     }      
   });
