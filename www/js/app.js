@@ -41,16 +41,16 @@
         views: {
           'home-tab': {
             templateUrl: "patients.html",
-            controller: 'PatientCtrl'
+            controller: 'PatientListCtrl'
           }
         }
       })
-      .state('tabs.response', {
-        url: "/response",
+      .state('tabs.patient-detail', {
+        url: "/patient",
         views: {
           'home-tab': {
-            templateUrl: "response.html",
-            controller: 'ResponseCtrl'
+            templateUrl: "patient-detail.html",
+            controller: 'PatientDetailCtrl'
           }
         }
       })  
@@ -163,7 +163,7 @@
     
   })
 
-  .controller('ResponseCtrl', function($state, $scope,$http, OpenmrsTrumpUrl, myFactory, $location){
+  .controller('PatientDetailCtrl', function($state, $scope,$http, OpenmrsTrumpUrl, myFactory, $location){
     $scope.patientDetail = [];
 
     $scope.showPatientDetail = myFactory;
@@ -184,7 +184,7 @@
 
   })
 
-  .controller('PatientCtrl', function($state, $scope,$http, OpenmrsTrumpUrl, myFactory) {
+  .controller('PatientListCtrl', function($state, $scope,$http, OpenmrsTrumpUrl, myFactory) {
 
     $scope.patientDetail = myFactory;
     $scope.patientDetail.setPatientsDetails([]);
@@ -256,9 +256,7 @@
       //console.log('data', data.results[0]);    
       
     });  
-    console.log('PatientCtrl');
+    console.log('PatientListCtrl');
 
-    $scope.showDetail = function(){
-       $state.go('tabs.response');
-    }      
+
   });

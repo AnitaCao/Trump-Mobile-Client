@@ -114,7 +114,7 @@
         <content has-header="true" padding="true">
 
             <div class="list card">
-              <a href="/#/tab/response?v={{$index}}" class="item item-icon-left" ng-repeat="patientName in patientNames track by $index" ng-selected = "patientName">
+              <a href="/#/tab/patient?v={{$index}}" class="item item-icon-left" ng-repeat="patientName in patientNames track by $index" ng-selected = "patientName">
                    {{patientName}}
               </a>
               </div> 
@@ -139,7 +139,7 @@
     
           <p>
             <a class="button icon ion-home" href="#/tab/home"> Home</a>
-            <a class="button icon icon-right ion-chevron-right" href="#/tab/response">Details of the result</a>
+            <a class="button icon icon-right ion-chevron-right" href="#/tab/patient-detail">Details of the result</a>
           </p>
         </content>
       </view>
@@ -147,22 +147,30 @@
 
 
 
-    <script id="response.html" type="text/ng-template">
+    <script id="patient-detail.html" type="text/ng-template">
       <view title="'Patient detail'">
         <content has-header="true" padding="true">
         <ion-list>
+         <ion-item class ='item' ng-model="patientDetail.person.display" >
+            Name :  {{patientDetail.person.display}}
+          </ion-item>
           <ion-item class ='item' ng-model="patientDetail.uuid" >
-            Patient uuid :  {{patientDetail.uuid}}
+            UUIS :  {{patientDetail.uuid}}
           </ion-item>
           <ion-item class ='item' ng-model="patientDetail.display" >
-            Identification and Name :  {{patientDetail.display}}
+            Display :  {{patientDetail.display}}
           </ion-item>
-          <ion-item class ='item' ng-model="patientDetail.person" >
-            <div class="list card">
-              <li class="item item-icon-left" ng-repeat="item in patientDetail.person ">
-                   {{item}}
-              </li>
-              </div> 
+          <ion-item class ='item' ng-model="patientDetail.person.gender" >
+            Gender :  {{patientDetail.person.gender}}
+          </ion-item>
+          <ion-item class ='item' ng-model="patientDetail.person.age" >
+            Age :  {{patientDetail.person.age}}
+          </ion-item>
+          <ion-item class ='item' ng-model="patientDetail.person.birthdate" >
+            Birth Date :  {{patientDetail.person.birthdate}}
+          </ion-item>
+          <ion-item class ='item' ng-model="patientDetail.person.dead" >
+            Dead :  {{patientDetail.person.dead}}
           </ion-item>
 
           </ion-list>
