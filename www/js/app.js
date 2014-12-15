@@ -186,19 +186,53 @@
   })
 
 
-  .controller('HomeTabCtrl', function($scope, myFactory) {
+  .controller('HomeTabCtrl', function($scope, myFactory, OpenmrsTrumpUrl, $http) {
     //if current user is "testuser", who is a doctor, in the home page , we need to hide the myDoctor option and myDetail option. If current user is "john123",
     //who is a trump patient user, we need to hide myPatients option . Note : we are using these two username to decide what option to hide, which is 
     //not good. we need to change it to get the user role by the user's username, which will invole another http request to openmrs, firstly get the user detail by username,
     //then get the roles list in the result, then in the roles list, find out if the list contains "TrumpPatient" or "Doctor". If the list contains "TrumpPatient", 
     //hide the "myPatients" option, if the list contains "Doctor", hide the "myDoctor" and "myDetail" option. 
     
-    if(myFactory.getCurrentUser()[0]=="john123"){
-      $scope.myPatients = true;
-    }else if(myFactory.getCurrentUser()[0] == "testuser"){
-      $scope.myDoctor = true;
-      $scope.myDetail = true;
-    }
+    $scope.user = {};
+    $scope.userDetail = {};
+    $scope.userRoleList = [];
+
+    // hide all the views in the begining until we decide either this user is a patient or doctor, so we can show different view to different type of user.
+    $scope.myPatients = true;
+    $scope.myDetail = true;
+    $scope.myDoctor = true;
+
+    // get user uuid by searching user in openmrs according to the username (the current username which you input in the sign-in page.)
+    $http.get(OpenmrsTrumpUrl + "/v1/user?q=" + myFactory.getCurrentUser()[0])
+    .success(function(data){
+      $scope.user = data.results[0];
+      console.log("user info: ", $scope.user);
+
+      // get user detail by searching user in openmrs according to the user's uuid we just got from the last request. 
+      $http.get(OpenmrsTrumpUrl + "/v1/user/" + $scope.user.uuid)
+      .success(function(userInfo){
+        $scope.userDetail = userInfo;
+        console.log("user detail info: ", $scope.userDetail);
+        
+        // add user roles to the userRoleList. one user may have more than one roles.
+        for(var i=0; i < $scope.userDetail.roles.length; i++){
+          // the "display" is actually the user's role name.
+          $scope.userRoleList.push($scope.userDetail.roles[i].display);         
+        }
+        console.log("user roles:", $scope.userRoleList);
+
+        // if the user is a Doctor, we should show the $scope.myPatients view to Doctor. 
+        if($scope.userRoleList.indexOf("Doctor") > -1){
+          $scope.myPatients = false;
+
+        }
+        // if the user is a TrumpPatient, we should show the $scope.myDoctor view and $scope.myDetail view to TrumpPatient. 
+        else if ($scope.userRoleList.indexOf("TrumpPatient") > -1){
+          $scope.myDetail = false;
+          $scope.myDoctor = false;
+        }       
+      });
+    });
 
     console.log('HomeTabCtrl--CurrentUser is : ', myFactory.getCurrentUser()[0]);
     
