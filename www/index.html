@@ -88,17 +88,21 @@
       <view title="'Home'">
         <content has-header="true" padding="true">
           <p> ! Choose the request you want to send.  </p>
+
           <div class="list card">
-              <a href="/#/tab/patients" class="item item-icon-left">
+              <a ng-hide="myPatients" href="/#/tab/patients" class="item item-icon-left">
                 <i class="icon ion-android-search"></i>
                 Show my patients
               </a>
 
-              <a href="#/tab/request" class="item item-icon-left">
+              <a ng-hide="myDoctor" href="#/tab/doctors" class="item item-icon-left">
                 <i class="icon ion-android-search"></i>
                 Show my doctors 
               </a>
-
+              <a ng-hide="myDetail" href="#/tab/mydetail" class="item item-icon-left">
+                <i class="icon ion-android-search"></i>
+                Show my detail 
+              </a>
               <a href="#/tab/request" class="item item-icon-left">
                 <i class="icon ion-android-search"></i>
                 Show Concepts 
@@ -124,6 +128,24 @@
         </content>
       </view>
     </script>
+
+    <script id="doctors.html" type="text/ng-template">
+
+      <view title="'My Doctors'">
+        <content has-header="true" padding="true">
+          <ion-list>
+         <ion-item class ='item' ng-repeat="item in doctors" >
+            Name :  {{item.person.display}}
+          </ion-item>
+
+          </ion-list>
+          </br>
+          <a class="button icon ion-home" href="#/tab/home"> Home</a>
+   
+        </content>
+      </view>
+    </script>
+
 
     
     <script id="request.html" type="text/ng-template">
@@ -177,15 +199,47 @@
       </view>
     </script>
 
+    <script id="mydetail.html" type="text/ng-template">
+      <view title="'My detail'">
+        <content has-header="true" padding="true">
+        <ion-list>
+         <ion-item class ='item' ng-model="myDetail.person.display" >
+            Name :  {{myDetail.person.display}}
+          </ion-item>
+          <ion-item class ='item' ng-model="myDetail.uuid" >
+            UUID :  {{myDetail.uuid}}
+          </ion-item>
+          <ion-item class ='item' ng-model="myDetail.display" >
+            Display :  {{myDetail.display}}
+          </ion-item>
+          <ion-item class ='item' ng-model="myDetail.person.gender" >
+            Gender :  {{myDetail.person.gender}}
+          </ion-item>
+          <ion-item class ='item' ng-model="myDetail.person.age" >
+            Age :  {{myDetail.person.age}}
+          </ion-item>
+          <ion-item class ='item' ng-model="myDetail.person.birthdate" >
+            Birth Date :  {{myDetail.person.birthdate}}
+          </ion-item>
+          <ion-item class ='item' ng-model="myDetail.person.dead" >
+            Dead :  {{myDetail.person.dead}}
+          </ion-item>
+
+          </ion-list>
+          <br/>
+          <p>
+            <a class="button icon ion-home" href="#/tab/home"> Home</a>
+            <a class="button icon ion-chevron-left" href="#/tab/patients"> the last page</a>
+          </p>
+        </content>
+      </view>
+    </script>
+
     <script id="about.html" type="text/ng-template">
       <view title="'About'">
         <content has-header="true" padding="true">
-          <h3>Create hybrid mobile apps with the web technologies you love.</h3>
-          <p>Free and open source, Ionic offers a library of mobile-optimized HTML, CSS and JS components for building highly interactive apps.</p>
-          <p>Built with Sass and optimized for AngularJS.</p>
-          <p>
-            <a class="button icon icon-right ion-chevron-right" href="#/tab/navstack">Tabs Nav Stack</a>
-          </p>
+          <h3>Trump project, UI example .</h3>
+          
         </content>
       </view>
     </script>
