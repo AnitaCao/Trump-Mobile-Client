@@ -109,6 +109,7 @@
     var patientsDetails = [];
     //var patientNames = [] ;
     var currentUser = [];
+    var currentUserRoleList = [];
     
     return { 
       setPatientsDetails : function(patientsDetails){
@@ -124,6 +125,13 @@
       getCurrentUser : function(){
         return currentUser;
       },
+      setCurrentUserRoleList : function(currentUserRoleList){
+
+        this.currentUserRoleList = currentUserRoleList;
+      },
+      getCurrentUserRoleList : function(){
+        return currentUserRoleList;
+      },
       addPatientsDetails : function(patientDetail){
         patientsDetails.push(patientDetail); 
         return patientsDetails;  
@@ -135,6 +143,7 @@
 
   .controller('SignInCtrl', function($scope, $state,$http,OpenmrsTrumpUrl, myFactory) {
     $scope.user = {};
+    $scope.userDetail = {};
     $scope.signIn = function() {
    
       console.log('Sign-In', $scope.user);
@@ -145,19 +154,50 @@
 
         $http.defaults.useXDomain = true;
 
-        //send a http requet to Openmrs to see if it is allowed or not. we chose concept because for now, the concept resource can be accessed by anyuser, 
-        //we can change to other resource as well. We do not need to result of this request, we just need to know if it is success or not. If success, which
-        //means user is a correct user in Openmrs. Then we can go to Home page. 
-        $http.get(OpenmrsTrumpUrl + "/v1/concept/")
-
+        $http.get(OpenmrsTrumpUrl + "/v1/user?q=" + $scope.user.username)
         .success(function(data){
+
+          $scope.user = data.results[0];
+          console.log("user info: ", $scope.user);
+
           //clear currentUser before add a new one inside. Make sure only has one username in it. 
           myFactory.setCurrentUser(myFactory.getCurrentUser().pop());
-          myFactory.getCurrentUser().push($scope.user.username);
+          myFactory.getCurrentUser().push($scope.user.uuid);
 
-          console.log("sing-in-currentuser: ", myFactory.getCurrentUser());
+          // // get user detail by searching user in openmrs according to the user's uuid we just got from the last request. 
+          // $http.get(OpenmrsTrumpUrl + "/v1/user/" + $scope.user.uuid)
+          // .success(function(userInfo){
+          //   $scope.userDetail = userInfo;
 
-          // go to Home page.
+          //   console.log("user details: ", $scope.userDetail);
+        
+          //   // add user roles to the userRoleList. one user may have more than one roles.
+          //   myFactory.setCurrentUserRoleList(myFactory.getCurrentUserRoleList().pop());
+
+          //   for(var i=0; i < $scope.userDetail.roles.length; i++){
+          //     // the "display" is actually the user's role name.
+          //     myFactory.getCurrentUserRoleList().push($scope.userDetail.roles[i].display);         
+          //   }
+            
+          //   console.log("user role list:", myFactory.getCurrentUserRoleList());  
+
+          // });
+
+       // })
+
+       //  //send a http requet to Openmrs to see if it is allowed or not. we chose concept because for now, the concept resource can be accessed by anyuser, 
+       //  //we can change to other resource as well. We do not need to result of this request, we just need to know if it is success or not. If success, which
+       //  //means user is a correct user in Openmrs. Then we can go to Home page. 
+       //  $http.get(OpenmrsTrumpUrl + "/v1/concept/")
+
+       //  .success(function(data){
+       //    //clear currentUser before add a new one inside. Make sure only has one username in it. 
+       //    myFactory.setCurrentUser(myFactory.getCurrentUser().pop());
+       //    myFactory.getCurrentUser().push($scope.user.username);
+
+       //    console.log("sing-in-currentuser: ", myFactory.getCurrentUser());
+
+          // go to Home page. 
           $state.go('tabs.home');
         }).
         error(function(data){
@@ -202,38 +242,67 @@
     $scope.myDetail = true;
     $scope.myDoctor = true;
 
-    // get user uuid by searching user in openmrs according to the username (the current username which you input in the sign-in page.)
-    $http.get(OpenmrsTrumpUrl + "/v1/user?q=" + myFactory.getCurrentUser()[0])
-    .success(function(data){
-      $scope.user = data.results[0];
-      console.log("user info: ", $scope.user);
+    // // get user uuid by searching user in openmrs according to the username (the current username which you input in the sign-in page.)
+    // $http.get(OpenmrsTrumpUrl + "/v1/user?q=" + myFactory.getCurrentUser()[0])
+    // .success(function(data){
+    //   $scope.user = data.results[0];
+    //   console.log("user info: ", $scope.user);
 
-      // get user detail by searching user in openmrs according to the user's uuid we just got from the last request. 
-      $http.get(OpenmrsTrumpUrl + "/v1/user/" + $scope.user.uuid)
-      .success(function(userInfo){
-        $scope.userDetail = userInfo;
-        console.log("user detail info: ", $scope.userDetail);
+    //   // get user detail by searching user in openmrs according to the user's uuid we just got from the last request. 
+    //   $http.get(OpenmrsTrumpUrl + "/v1/user/" + $scope.user.uuid)
+    //   .success(function(userInfo){
+    //     $scope.userDetail = userInfo;
+    //     console.log("user detail info: ", $scope.userDetail);
         
-        // add user roles to the userRoleList. one user may have more than one roles.
-        for(var i=0; i < $scope.userDetail.roles.length; i++){
-          // the "display" is actually the user's role name.
-          $scope.userRoleList.push($scope.userDetail.roles[i].display);         
-        }
-        console.log("user roles:", $scope.userRoleList);
+    //     // add user roles to the userRoleList. one user may have more than one roles.
+    //     for(var i=0; i < $scope.userDetail.roles.length; i++){
+    //       // the "display" is actually the user's role name.
+    //       $scope.userRoleList.push($scope.userDetail.roles[i].display);         
+    //     }
+    //     console.log("user roles:", $scope.userRoleList);
 
-        // if the user is a Doctor, we should show the $scope.myPatients view to Doctor. 
-        if($scope.userRoleList.indexOf("Doctor") > -1){
-          $scope.myPatients = false;
+    //     // if the user is a Doctor, we should show the $scope.myPatients view to Doctor. 
+    //     if($scope.userRoleList.indexOf("Doctor") > -1){
+    //       $scope.myPatients = false;
 
-        }
-        // if the user is a TrumpPatient, we should show the $scope.myDoctor view and $scope.myDetail view to TrumpPatient. 
-        else if ($scope.userRoleList.indexOf("TrumpPatient") > -1){
-          $scope.myDetail = false;
-          $scope.myDoctor = false;
-        }       
-      });
-    });
+    //     }
+    //     // if the user is a TrumpPatient, we should show the $scope.myDoctor view and $scope.myDetail view to TrumpPatient. 
+    //     else if ($scope.userRoleList.indexOf("TrumpPatient") > -1){
+    //       $scope.myDetail = false;
+    //       $scope.myDoctor = false;
+    //     }       
+    //   });
+    // });
 
+          // get user detail by searching user in openmrs according to the user's uuid we just got from the last request. 
+          $http.get(OpenmrsTrumpUrl + "/v1/user/" + myFactory.getCurrentUser()[0])
+          .success(function(userInfo){
+            $scope.userDetail = userInfo;
+
+            console.log("user details: ", $scope.userDetail);
+        
+            // add user roles to the userRoleList. one user may have more than one roles.
+          
+
+            for(var i=0; i < $scope.userDetail.roles.length; i++){
+              // the "display" is actually the user's role name.
+              $scope.userRoleList.push($scope.userDetail.roles[i].display);         
+            }
+            
+            console.log("user role list:", $scope.userRoleList); 
+            if($scope.userRoleList.indexOf("Doctor") > -1){
+             $scope.myPatients = false;
+
+             }
+              // if the user is a TrumpPatient, we should show the $scope.myDoctor view and $scope.myDetail view to TrumpPatient. 
+             else if ($scope.userRoleList.indexOf("TrumpPatient") > -1){
+              $scope.myDetail = false;
+              $scope.myDoctor = false;
+    }   
+
+          });
+    
+    console.log('HomeTabCtrl--user roleList is : ', $scope.userRoleList);     
     console.log('HomeTabCtrl--CurrentUser is : ', myFactory.getCurrentUser()[0]);
     
   })
@@ -271,8 +340,9 @@
     //here we set the url manually because we only use one usecase for the doctor whose uuid is 5f4d1d28-5986-4cb7-9edd-6145f544b5e3, if we need to do this in the normal way, we 
     //need to get the logined-in username, and send a http request to "../v1/user?q=[username]", and get the uuid of this user (this doctor). 
     //"include_invalidated=true" means we want to get all the patientassignments which related to this user, including invalidated assignments (deleted ones). 
-
-    $http.get(OpenmrsTrumpUrl + "/v1/trumpmodule/patientassignment?assigned_user_id=5f4d1d28-5986-4cb7-9edd-6145f544b5e3&include_invalidated=true")
+    console.log("PatientListCtrl--current user is:", myFactory.getCurrentUser());
+    //$http.get(OpenmrsTrumpUrl + "/v1/trumpmodule/patientassignment?assigned_user_id=5f4d1d28-5986-4cb7-9edd-6145f544b5e3&include_invalidated=true")
+    $http.get(OpenmrsTrumpUrl + "/v1/trumpmodule/patientassignment?assigned_user_id="+myFactory.getCurrentUser()[0]+"&include_invalidated=true")
     .success(function(data){
       for(var i = 0; i < data.results.length; i++){
         // get the patient uuid from the results which are patientAssignments. The uuid of patient is inside the display value. 
@@ -324,7 +394,9 @@
     //here we set the url manually because we only use one usecase for the patient whose uuid is 73efdf58-7979-4da2-bc01-8ee613062b68, if we need to do this in the normal way, we 
     //need to get the logined-in username, and send a http request to "../v1/user?q=[username]", and get the uuid of this user (this TrumpPatient). 
     //"include_invalidated=true" means we want to get all the patientassignments which related to this user, including invalidated assignments (deleted ones). 
-    $http.get(OpenmrsTrumpUrl + "/v1/trumpmodule/patientassignment?assigned_user_id=73efdf58-7979-4da2-bc01-8ee613062b68&include_invalidated=true")
+    
+    $http.get(OpenmrsTrumpUrl + "/v1/trumpmodule/patientassignment?assigned_user_id="+myFactory.getCurrentUser()[0]+"&include_invalidated=true")
+    //$http.get(OpenmrsTrumpUrl + "/v1/trumpmodule/patientassignment?assigned_user_id=73efdf58-7979-4da2-bc01-8ee613062b68&include_invalidated=true")
     .success(function(data){
         //the uuid of this patient from openmrs which is linked to TrumpPatient. 
         $scope.patient.uuid = data.results[0].display.substr(10,36);
@@ -360,11 +432,12 @@
 
 
 
-  .controller('MyDetailCtrl', function($state, $scope,$http, OpenmrsTrumpUrl){
+  .controller('MyDetailCtrl', function($state, $scope,$http, OpenmrsTrumpUrl, myFactory){
     $scope.myDetail = [];
     $scope.patient = [];
 
-    $http.get(OpenmrsTrumpUrl + "/v1/trumpmodule/patientassignment?assigned_user_id=73efdf58-7979-4da2-bc01-8ee613062b68&include_invalidated=true")
+    $http.get(OpenmrsTrumpUrl + "/v1/trumpmodule/patientassignment?assigned_user_id="+myFactory.getCurrentUser()[0]+"&include_invalidated=true")
+    //$http.get(OpenmrsTrumpUrl + "/v1/trumpmodule/patientassignment?assigned_user_id=73efdf58-7979-4da2-bc01-8ee613062b68&include_invalidated=true")
     .success(function(data){
         $scope.patient.uuid = data.results[0].display.substr(10,36);
         $http.get(OpenmrsTrumpUrl + "/v1/patient/"+$scope.patient.uuid)
